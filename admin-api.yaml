@@ -1,0 +1,1383 @@
+openapi: 3.0.0
+info:
+  title: Ikarian App API
+  description: API for mobile app
+  version: '1.0'
+servers:
+  - url: 'http://localhost:8080'
+  - url: 'https://ikariandietapp-int.apps.ikarian.com'
+security:
+  - default: [ ]
+tags:
+  - name: referenceData
+    description: Services relevant to the reference data of ikarian diet app
+paths:
+  /health-conditions:
+    get:
+      tags:
+        - referenceData
+      summary: Get all the healthConditions
+      operationId: getHealthConditions
+      description: gets all the health conditions that ikarian app supports
+      responses:
+        200:
+          description: List of healthconditions with their ids
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HealthConditions'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        500:
+          $ref: '#/components/responses/ServerError'
+  /food-trends:
+    get:
+      tags:
+        - referenceData
+      summary: Get all the foodTrends
+      operationId: getFoodTrends
+      description: gets all the foodtrends that ikarian app supports
+      responses:
+        200:
+          description: List of foodtrends with their ids
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FoodTrends'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        500:
+          $ref: '#/components/responses/ServerError'
+  /foods:
+    get:
+      tags:
+        - referenceData
+      summary: Get all the ikarian diet foods. Current implementation is for all regions (i.e. no country-specific foods).
+      operationId: getFoods
+      description: |
+        Get all the foods from the backend.
+        Implementation without images yet.
+      responses:
+        200:
+          description: List of foods with their ids, thumbnail urls and foodMeasures.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FoodWithMeasures'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        500:
+          $ref: '#/components/responses/ServerError'
+    post:
+      tags:
+        - referenceData
+      summary: Create an ikarian diet food. Current implementation is for all regions (i.e. no country-specific foods).
+      operationId: creteFood
+      description: |
+        Store a new food in ikarianDb.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UpsertFoodWithMeasures'
+      responses:
+        200:
+          description: Food with all details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodWithMeasures'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        500:
+          $ref: '#/components/responses/ServerError'`
+  /foods/{id}:
+    get:
+      tags:
+        - referenceData
+      summary: Get specific ikarian diet food. Current implementation is for all regions (i.e. no country-specific foods).
+      operationId: getFood
+      description: |
+        Get specific food from the backend.
+        Implementation without images yet.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            description: the id of the food
+            format: guid
+      responses:
+        200:
+          description: Food with all details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodWithMeasures'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        500:
+          $ref: '#/components/responses/ServerError'
+    put:
+      tags:
+        - referenceData
+      summary: Update specific ikarian diet food.
+      operationId: updateFood
+      description: |
+        Update specific food from the backend.
+        Implementation without images yet.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            description: the id of the food
+            format: guid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/UpsertFoodWithMeasures'
+      responses:
+        200:
+          description: Food with all details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodWithMeasures'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        500:
+          $ref: '#/components/responses/ServerError'
+    delete:
+      tags:
+        - referenceData
+      summary: delete a specific food.
+      operationId: deleteFood
+      description: |
+        this deletes a specific food
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            description: the id of the food
+            format: guid
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        500:
+          $ref: '#/components/responses/ServerError'
+  /recipes:
+    get:
+      tags:
+        - referenceData
+      summary: Get all the recipes
+      operationId: getAdminRecipes
+      description: gets all the recipes that ikarian app supports
+      responses:
+        200:
+          description: List of recipes with their details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Recipe'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        500:
+          $ref: '#/components/responses/ServerError'
+    post:
+      tags:
+        - referenceData
+      summary: Create a new recipe
+      operationId: createRecipe
+      description: |
+        Create specific recipe. Implementation without images yet.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertRecipe'
+      responses:
+        200:
+          description: insert ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        500:
+          $ref: '#/components/responses/ServerError'
+  /recipes/{id}:
+    get:
+      tags:
+        - referenceData
+      summary: Get a specific Recipe
+      operationId: getAdminRenipe
+      description: gets a specific recipe that ikarian app supports
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            description: the id of the food
+            format: guid
+      responses:
+        200:
+          description: List of recipes with their details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        500:
+          $ref: '#/components/responses/ServerError'
+    put:
+      tags:
+        - referenceData
+      summary: Update specific recipe
+      operationId: updateRecipe
+      description: |
+        Update specific recipe. Implementation without images yet.
+        Upsert overrides all existing values. Non present fields will write null in db.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            description: the id of the recipe
+            format: guid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpsertRecipe'
+      responses:
+        200:
+          description: update ok.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        500:
+          $ref: '#/components/responses/ServerError'
+    delete:
+      tags:
+        - referenceData
+      summary: delete a specific recipe.
+      operationId: deleteRecipe
+      description: |
+        this deletes a specific recipe
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            description: the id of the recipe
+            format: guid
+      responses:
+        204:
+          $ref: '#/components/responses/NoContent'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        500:
+          $ref: '#/components/responses/ServerError'
+  /equivalents:
+    post:
+      tags:
+        - referenceData
+      summary: Service returning equivalent foods or recipes.
+      operationId: findEquivalents
+      description: |
+        This service returns a list of equivalents foods or recipes.
+         - Equivalent foods for food-input,
+         - equivalent recipes for recipe-input
+        It additionally can filter based on input-region.
+        It additionally can filter based on user-preferences.
+        Service can also be built for fallback on frontend.
+        Service calculates equivaletns based on distribution of macros. If deemed necessary, portion will be added but for the moment
+        it should be irrelevant?!
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FindEquivalentsRequest'
+      responses:
+        200:
+          description: return sorted the equivalent foods or diets.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FindEquivalentsResponse'
+        400:
+          $ref: '#/components/responses/InvalidInput'
+        401:
+          $ref: '#/components/responses/Unauthorized'
+        403:
+          $ref: '#/components/responses/Forbidden'
+        500:
+          $ref: '#/components/responses/ServerError'
+components:
+  responses:
+    NotFound:
+      description: The specified resource is not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ServerError:
+      description: The error response if something goes wrong.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotImplemented:
+      description: The server does not support the functionality required to fulfill the request.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InvalidInput:
+      description: Invalid input request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Created:
+      description: Item Created
+    OK:
+      description: OK
+    NoContent:
+      description: No Content
+    Unauthorized:
+      description: The token wasn't correct or didn't have the correct scope
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: The server understands the request but refuses to authorize it.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    ErrorResponse:
+      type: object
+      description: The Error Response object
+      properties:
+        timestamp:
+          type: string
+          example: "2021-08-31T10:05:08.772+0000"
+          description: the timestamp of when the error occured.
+        path:
+          type: string
+          example: /vehicleDataSync
+          description: the resource path of the API that threw an error.
+        message:
+          type: string
+          example: "UserWithDetails.info1: must not be bull"
+          description: A human readable message indicating what went wrong.
+    HealthConditions:
+      type: object
+      properties:
+        id:
+          type: string
+          format: guid
+          description: the uid of the health condition
+        names:
+          type: array
+          items:
+            type: object
+            description: health-condition names on each language
+            properties:
+              name:
+                type: string
+                description: the name of the health condition
+                example: Lactose intolerant
+              translation_country:
+                type: string
+                description: |
+                  The ISO 3166-1 alpha-3 code according to https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+                  of the translation's language
+                example: GRC
+            required:
+              - name
+              - translation_country
+      required:
+        - names
+        - id
+    FoodTrends:
+      type: object
+      properties:
+        id:
+          type: string
+          format: guid
+          description: the uid of the food trend
+        names:
+          type: array
+          items:
+            type: object
+            description: food-trends on each language
+            properties:
+              name:
+                type: string
+                description: the name of the food trend
+                example: vegetarian
+              translation_country:
+                type: string
+                description: |
+                  The ISO 3166-1 alpha-3 code according to https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+                  of the translation's language
+                example: GRC
+            required:
+              - name
+              - translation_country
+      required:
+        - names
+        - id
+    FoodWithMeasures:
+      allOf:
+        - $ref: '#/components/schemas/Food'
+        - type: object
+          properties:
+            suitableHealthConditions:
+              type: array
+              description: the list of health-condition ids for which this food is ok
+              items:
+                type: string
+            suitableFoodTrends:
+              type: array
+              description: the list of trend ids for which this food is ok
+              items:
+                type: string
+            measures:
+              type: array
+              items:
+                $ref: '#/components/schemas/FoodMeasure'
+            preferredMeasure:
+              type: string
+              format: guid
+              description: the guid of the preferredMeasure for this food, to be used for displaying
+    Food:
+      type: object
+      properties:
+        id:
+          type: string
+          format: guid
+          description: the uid of the food
+        names:
+          type: array
+          items:
+            type: object
+            description: food names on each language
+            properties:
+              name:
+                type: string
+                description: the name of the food
+                example: banana
+              translation_country:
+                type: string
+                description: |
+                  The ISO 3166-1 alpha-3 code according to https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+                  of the translation's language
+                example: GRC
+        calories:
+          type: number
+          format: float #try generators instead multipleOf: 0.001 (always 3 decimal places for this) https://stackoverflow.com/questions/44968026/how-can-i-denote-decimal-floating-point-in-swagger-specs
+          description: calories in KCAL. Always per 100 grams
+        macronutrients:
+          type: object
+          properties:
+            protein:
+              type: number
+              format: float
+              description: protein in grams. Always per 100 grams
+            carbs:
+              type: number
+              format: float
+              description: carbs in grams. Always per 100grams
+            fats:
+              type: number
+              format: float
+              description: fats in grams. Always per 100grams
+          required:
+            - protein
+            - carbs
+            - fats
+        micronutrients:
+          type: object
+          properties:
+            cholesterolMilligrams:
+              type: number
+              format: float
+              description: Always per 100 grams
+            waterGrams:
+              type: number
+              format: float
+              description: Always per 100 grams
+            vitaminB12Micrograms:
+              type: number
+              format: float
+              description: Always per 100 grams
+            vitaminEmilligrams:
+              type: number
+              format: float
+              description: Always per 100 grams
+            lactoseGrams:
+              type: number
+              format: float
+              description: Always per 100 grams
+            sugarsGrams:
+              type: number
+              format: float
+              description: Always per 100 grams
+            magnesiumMilligrams:
+              type: number
+              format: float
+              description: Always per 100 grams
+            zingMilligrams:
+              type: number
+              format: float
+              description: Always per 100 grams
+            manganeseMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            ribofalbinMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            folateTotalMicrograms:
+              type: number
+              format: float
+              description: Always per 100g
+            fattyAcidsTotalSaturatedGrams:
+              type: number
+              format: float
+              description: Always per 100g
+            fattyAcidsTotalMonoSaturatedGrams:
+              type: number
+              format: float
+              description: Always per 100g
+            chlorideMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            fiberGrams:
+              type: number
+              format: float
+              description: Always per 100g
+            vitaminAMicrograms:
+              type: number
+              format: float
+              description: Always per 100g
+            vimatinCMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            vitaminKMicrograms:
+              type: number
+              format: float
+              description: Always per 100g
+            alcoholGrams:
+              type: number
+              format: float
+              description: Always per 100g
+            calciumMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            phosphorusMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            copperMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            seleniumMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            niacinMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            folicAcidUC:
+              type: number
+              format: float
+              description: Always per 100g
+            sodiumMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            vitaminB6Milligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            vitaminDMicrograms:
+              type: number
+              format: float
+              description: Always per 100g
+            startchGrams:
+              type: number
+              format: float
+              description: Always per 100g
+            caffeineMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            ironMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            potassiumMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            fluorideMicrograms:
+              type: number
+              format: float
+              description: Always per 100g
+            thiaminMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            panthotenicAcidMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            fattyAcidsTotalTransGrams:
+              type: number
+              format: float
+              description: Always per 100g
+            fattyAcidsTotalPolyUnsaturatedGrams:
+              type: number
+              format: float
+              description: Always per 100g
+        smallThumbnail:
+          type: string
+          description: the url location to download the image
+        mediumThumbnail:
+          type: string
+          description: the url location to download the image
+      required:
+        - names
+        - id
+        - calories
+        - macronutrients
+    FoodMeasure:
+      type: object
+      description: |
+        A food's measure. For example a handful of almonds looks like name=handful,quantity=1.00,total_grams=53.45
+      properties:
+        names:
+          type: array
+          items:
+            type: object
+            description: food measure name on each language
+            properties:
+              name:
+                type: string
+                description: the food measure name
+                example: banana
+              translation_country:
+                type: string
+                description: |
+                  The ISO 3166-1 alpha-3 code according to https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+                  of the translation's language
+                example: GRC
+        id:
+          type: string
+          format: guid
+          description: the uid of the foodMeasure
+        quantity:
+          type: number
+          format: float
+          description: the quantity of the food measure (i.e. 1.5 teaspoon) based on which it's equivalent  on which the food Measure
+          example: 1.00
+        total_grams:
+          type: number
+          format: float
+          description: the total grams of the foodMeasure for the given quantity.
+          example: 150.000
+    UpsertFoodWithMeasures:
+      allOf:
+        - $ref: '#/components/schemas/UpsertFood'
+        - type: object
+          properties:
+            suitableHealthConditions:
+              type: array
+              description: the full list of health-condition ids for which this food is ok. This will always replace existing list.
+              items:
+                type: string
+            suitableFoodTrends:
+              type: array
+              description: the full list of trend ids for which this food is ok. This will always replace existing list.
+              items:
+                type: string
+            measures:
+              type: array
+              description: the full list of food measures for this food. This will always replace existing list.
+              items:
+                $ref: '#/components/schemas/UpsertFoodMeasure'
+            preferredMeasure:
+              type: string
+              description: the name of the preferredMeasure for this food.
+    UpsertFoodMeasure:
+      type: object
+      description: |
+        A food's measure. For example a handful of almonds looks like name=handful,quantity=1.00,total_grams=53.45
+      properties:
+        names:
+          type: array
+          items:
+            type: object
+            description: food measure name on each language
+            properties:
+              name:
+                type: string
+                description: the food measure name
+                example: banana
+              translation_country:
+                type: string
+                description: |
+                  The ISO 3166-1 alpha-3 code according to https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+                  of the translation's language
+                example: GRC
+        quantity:
+          type: number
+          format: float
+          description: the quantity of the food measure (i.e. 1.5 teaspoon) based on which it's equivalent  on which the food Measure
+          example: 1.00
+        total_grams:
+          type: number
+          format: float
+          description: the total grams of the foodMeasure for the given quantity.
+          example: 150.000
+    UpsertFood:
+      type: object
+      properties:
+        names:
+          type: array
+          items:
+            type: object
+            description: food names on each language
+            properties:
+              name:
+                type: string
+                description: the name of the food
+                example: banana
+              translation_country:
+                type: string
+                description: |
+                  The ISO 3166-1 alpha-3 code according to https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+                  of the translation's language
+                example: GRC
+        calories:
+          type: number
+          format: float #try generators instead multipleOf: 0.001 (always 3 decimal places for this) https://stackoverflow.com/questions/44968026/how-can-i-denote-decimal-floating-point-in-swagger-specs
+          description: calories in KCAL. Always per 100 grams
+        macronutrients:
+          type: object
+          properties:
+            protein:
+              type: number
+              format: float
+              description: protein in grams. Always per 100 grams
+            carbs:
+              type: number
+              format: float
+              description: carbs in grams. Always per 100grams
+            fats:
+              type: number
+              format: float
+              description: fats in grams. Always per 100grams
+          required:
+            - protein
+            - carbs
+            - fats
+        micronutrients:
+          type: object
+          properties:
+            cholesterolMilligrams:
+              type: number
+              format: float
+              description: Always per 100 grams
+            waterGrams:
+              type: number
+              format: float
+              description: Always per 100 grams
+            vitaminB12Micrograms:
+              type: number
+              format: float
+              description: Always per 100 grams
+            vitaminEmilligrams:
+              type: number
+              format: float
+              description: Always per 100 grams
+            lactoseGrams:
+              type: number
+              format: float
+              description: Always per 100 grams
+            sugarsGrams:
+              type: number
+              format: float
+              description: Always per 100 grams
+            magnesiumMilligrams:
+              type: number
+              format: float
+              description: Always per 100 grams
+            zingMilligrams:
+              type: number
+              format: float
+              description: Always per 100 grams
+            manganeseMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            ribofalbinMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            folateTotalMicrograms:
+              type: number
+              format: float
+              description: Always per 100g
+            fattyAcidsTotalSaturatedGrams:
+              type: number
+              format: float
+              description: Always per 100g
+            fattyAcidsTotalMonoSaturatedGrams:
+              type: number
+              format: float
+              description: Always per 100g
+            chlorideMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            fiberGrams:
+              type: number
+              format: float
+              description: Always per 100g
+            vitaminAMicrograms:
+              type: number
+              format: float
+              description: Always per 100g
+            vimatinCMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            vitaminKMicrograms:
+              type: number
+              format: float
+              description: Always per 100g
+            alcoholGrams:
+              type: number
+              format: float
+              description: Always per 100g
+            calciumMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            phosphorusMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            copperMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            seleniumMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            niacinMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            folicAcidUC:
+              type: number
+              format: float
+              description: Always per 100g
+            sodiumMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            vitaminB6Milligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            vitaminDMicrograms:
+              type: number
+              format: float
+              description: Always per 100g
+            startchGrams:
+              type: number
+              format: float
+              description: Always per 100g
+            caffeineMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            ironMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            potassiumMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            fluorideMicrograms:
+              type: number
+              format: float
+              description: Always per 100g
+            thiaminMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            panthotenicAcidMilligrams:
+              type: number
+              format: float
+              description: Always per 100g
+            fattyAcidsTotalTransGrams:
+              type: number
+              format: float
+              description: Always per 100g
+            fattyAcidsTotalPolyUnsaturatedGrams:
+              type: number
+              format: float
+              description: Always per 100g
+        smallThumbnail:
+          type: string
+          description: the url location to download the image
+        mediumThumbnail:
+          type: string
+          description: the url location to download the image
+      required:
+        - names
+        - calories
+        - macronutrients
+    Recipe:
+      type: object
+      properties:
+        names:
+          type: array
+          items:
+            type: object
+            description: recipe names on each language
+            properties:
+              name:
+                type: string
+                description: the name of the recipe
+                example: Cobb salad with chicken
+              translation_country:
+                type: string
+                description: |
+                  The ISO 3166-1 alpha-3 code according to https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+                  of the translation's language
+                example: GRC
+            required:
+              - name
+              - translation_country
+        id:
+          type: string
+          format: guid
+          description: the uid of the recipe
+        smallThumbnail:
+          type: string
+          description: the url location to download the small thumbnail for the daily plan
+        mediumThumbnail:
+          type: string
+          description: the url location to download big thumbnail for the recipe page
+        video:
+          type: string
+          description: the url location to download the preparation/cooking video for the recipe
+        preparationTimeMinutes:
+          type: integer
+          description: preparation time in minutes
+          example: 54
+        easinessLevel:
+          type: string
+          description: easiness level of recipe
+          enum:
+            - EASY
+            - MEDIUM
+            - HARD
+        suggestedMealTimes:
+          type: array
+          description: the list of suggested mealtimes for this recipe. Relevant for free day
+          items:
+            $ref: '#/components/schemas/MealTime'
+        suitableFoodTrends:
+          type: array
+          description: the list of trend ids for which this food is ok
+          items:
+            type: string
+        suitableHealthConditions:
+          type: array
+          description: the list of health-condition ids for which this food is ok
+          items:
+            type: string
+        healthBenefits:
+          type: array
+          items:
+            type: object
+            description: health benefit on each language
+            properties:
+              healthBenefit:
+                type: string
+                description: the description of the health benefit
+                example: This diet is amazingn because it provides a morning boost.
+              translation_country:
+                type: string
+                description: |
+                  The ISO 3166-1 alpha-3 code according to https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+                  of the translation's language
+                example: GRC
+            required:
+              - healthBenefit
+              - translation_country
+        instructionStepsWithLanguage:
+          type: array
+          description: | 
+            the Recipe's instruction steps. Here backend will probably return each step separately and also the stepNumber
+            to facilitate editing/patching as such. In the db it's a json-entry, and in the mobileapp too, the entire instruction will be concatenated and returned.
+          items:
+            type: object
+            description: the cooking instruction step
+            properties:
+              instructionSteps:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    instructionStep:
+                      type: string
+                      description: the recipe's instruction step
+                    stepNumber:
+                      type: integer
+                      description: the recipe's instruction step's order.
+                  required:
+                    - instructionStep
+                    - stepNumber
+              translation_country:
+                type: string
+                description: |
+                  The ISO 3166-1 alpha-3 code according to https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+                  of the translation's language
+                example: GRC
+            required:
+              - instructionSteps
+              - translation_country
+        ingredients:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: guid
+                description: the uid of the food
+              quantity:
+                type: number
+                format: float
+                description: |
+                  the food quantity in the amount of raw grams for the food.
+                example: 145.433
+            required:
+              - id
+              - quantity
+        nutritionTotals:
+          type: object
+          properties:
+            recipeCarbsGrams:
+              type: number
+              format: float
+            recipeFatGrams:
+              type: number
+              format: float
+            recipeProteinGrams:
+              type: number
+              format: float
+            recipeCaloriesKcal:
+              type: number
+              format: float
+        shareUrl:
+          type: string
+          description: the url to share the recipe, pointing to ikarianDietsweb page.
+      required:
+        - names
+        - id
+        - ingredients
+    UpsertRecipe:
+      type: object
+      properties:
+        names:
+          type: array
+          items:
+            type: object
+            description: recipe names on each language
+            properties:
+              name:
+                type: string
+                description: the name of the recipe
+                example: Cobb salad with chicken
+              translation_country:
+                type: string
+                description: |
+                  The ISO 3166-1 alpha-3 code according to https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+                  of the translation's language
+                example: GRC
+            required:
+              - name
+              - translation_country
+        smallThumbnail:
+          type: string
+          description: the url location to download the small thumbnail for the daily plan
+        mediumThumbnail:
+          type: string
+          description: the url location to download big thumbnail for the recipe page
+        video:
+          type: string
+          description: the url location to download the preparation/cooking video for the recipe
+        preparationTimeMinutes:
+          type: integer
+          description: preparation time in minutes
+          example: 54
+        easinessLevel:
+          type: string
+          description: easiness level of recipe
+          enum:
+            - EASY
+            - MEDIUM
+            - HARD
+        suggestedMealTimes:
+          type: array
+          description: the list of suggested mealtimes for this recipe. Relevant for free day
+          items:
+            $ref: '#/components/schemas/MealTime'
+        healthBenefits:
+          type: array
+          items:
+            type: object
+            description: health benefit on each language
+            properties:
+              healthBenefit:
+                type: string
+                description: the description of the health benefit
+                example: This diet is amazingn because it provides a morning boost.
+              translation_country:
+                type: string
+                description: |
+                  The ISO 3166-1 alpha-3 code according to https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+                  of the translation's language
+                example: GRC
+            required:
+              - healthBenefit
+              - translation_country
+        instructionStepsWithLanguage:
+          type: array
+          description: |
+            the Recipe's instruction steps. Here backend will probably return each step separately and also the stepNumber
+            to facilitate editing/patching as such. In the db it's a json-entry, and in the mobileapp too, the entire instruction will be concatenated and returned.
+          items:
+            type: object
+            description: the cooking instruction step
+            properties:
+              instructionSteps:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    instructionStep:
+                      type: string
+                      description: the recipe's instruction step
+                    stepNumber:
+                      type: integer
+                      description: the recipe's instruction step's order.
+                  required:
+                    - instructionStep
+                    - stepNumber
+              translation_country:
+                type: string
+                description: |
+                  The ISO 3166-1 alpha-3 code according to https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+                  of the translation's language
+                example: GRC
+            required:
+              - instructionSteps
+              - translation_country
+        ingredients:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                format: guid
+                description: the uid of the food
+              quantity:
+                type: number
+                format: float
+                description: |
+                  the food quantity in the amount of raw grams for the food.
+                example: 145.433
+            required:
+              - id
+              - quantity
+        shareUrl:
+          type: string
+          description: the url to share the recipe, pointing to ikarianDietsweb page.
+      required:
+        - names
+        - ingredients
+    MealTime:
+      type: string
+      description: The meal's suggested eating time.
+      enum:
+        - BREAKFAST
+        - MORNING_SNACK
+        - LUNCH
+        - AFTERNOON_SNACK
+        - DINNER
+    FindEquivalentsRequest:
+      type: object
+      properties:
+        foodId:
+          type: string
+          format: guid
+          description: The foodId based on which the equivalents should be found. Either foodId or recipeId should be present.
+        foodQuantity:
+          type: number
+          format: float
+          description: |
+            the food quantity in grams.
+          example: 145.433
+        recipeId:
+          type: string
+          format: guid
+          description: The recipeId based on which the equivalents should be found. Either foodId or recipeId should be present
+        recipePortion:
+          type: number
+          format: float
+          description: |
+            the portion multiplier of the recipe.
+          example: 1.50
+        country:
+          type: string
+          description: |
+            The ISO 3166-1 alpha-3 code of the user's country, according to https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+            Maybe not needed, if backend can get it from appstore/revenuecat?
+          example: GRC
+        foodAllergies:
+          type: array
+          description: The current food allergies of the user.
+          minItems: 0
+          maxItems: 100
+          items:
+            type: string
+            description: The uuid of the food to which a user is allergic
+            format: guid
+        foodDislikes:
+          type: array
+          description: The current foods that the user dislikes.
+          minItems: 0
+          maxItems: 100
+          items:
+            type: string
+            description: The uuid of the food to which a user is allergic
+            format: guid
+        healthConditions:
+          type: array
+          description: The current healthConditions of the user.
+          minItems: 0
+          maxItems: 20
+          items:
+            type: string
+            description: The uuid of the health condition that a user has.
+            format: guid
+    FindEquivalentsResponse:
+      type: object
+      description: The equivalents list of either foods or recipes. Sort order matters because it is based on equivalence factor and user preferences.
+      properties:
+        equivalents:
+          type: array
+          items:
+            type: object
+            description: an equivalent item
+            properties:
+              id:
+                type: string
+                description: the food or recipe id of the equivalent
+              type:
+                type: string
+                enum:
+                  - FOOD
+                  - RECIPE
+              foodQuantity:
+                type: number
+                format: float
+                description: |
+                  the food quantity in grams in case of FOOD type.
+                example: 145.433
+              recipePortion:
+                type: number
+                format: float
+                description: |
+                  the portion multiplier of the recipe in case of RECIPE type.
+                example: 1.50
